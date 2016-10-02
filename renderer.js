@@ -43,7 +43,9 @@ class GooseSocket extends EventEmitter {
     constructor() {
         super()
 
-        this.on('input', ()=>{})
+        this.on('input', (data)=>{
+            ipcRenderer.send('input', data)
+        })
         this.on('output', ()=>{})
     }
 }
@@ -66,7 +68,7 @@ class GooseTerminal {
         this.socket = new GooseSocket()
         this.channel = new GooseChannel()
         this.channel.on('newData', (data)=>{
-            this.socket.emit('data', data)
+            this.socket.emit('output', data)
         })
     }
 
@@ -77,11 +79,11 @@ class GooseTerminal {
             this.terminalElem.appendChild(term)
 
             term.tabindex = 0
-            let terminal = new Terminal({columns: 20, rows: 2})
+            let terminal = new Terminal({columns: 80, rows: 30})
             let socket = this.socket
 
-            terminal.dom(term).on('data', (data)=>{console.log(data)})
-            terminal.write('asd')
+            terminal.dom(term).on('data', (data)=>{this.socket.emit('input', data)})
+            this.socket.on('output', (data)=>{terminal.write(data)})
         }
         return this.terminalElem
     }

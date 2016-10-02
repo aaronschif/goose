@@ -80,8 +80,8 @@ class HidableWindow {
             this.window.webContents.send('goose', data)
         });
 
-        ipcMain.on('goose-type', (event, data)=>{
-            console.log(data)
+        ipcMain.on('input', (event, data)=>{
+            term.write(data)
         })
     }
 
