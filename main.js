@@ -77,7 +77,7 @@ class HidableWindow {
         })
 
         term.on('data', (data)=>{
-            this.window.webContents.send('ping', data)
+            this.window.webContents.send('goose', data)
         });
 
         ipcMain.on('goose-type', (event, data)=>{
