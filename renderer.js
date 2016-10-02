@@ -1,6 +1,8 @@
 const {ipcRenderer} = require('electron')
 
-const Terminal = require('terminal.js')
+// const Terminal = require('terminal.js')
+const Terminal = require('xterm')
+require('xterm/addons/fit')
 
 const {Duplex} = require('stream')
 const EventEmitter = require('events')
@@ -75,15 +77,13 @@ class GooseTerminal {
     getTerminal() {
         if (this.terminalElem === null) {
             this.terminalElem = document.createElement('div')
-            let term = document.createElement('pre')
-            this.terminalElem.appendChild(term)
+            let term = new Terminal()
+            term.open(this.terminalElem)
+            term.resize(80, 30);
+            // term.fit()
 
-            term.tabindex = 0
-            let terminal = new Terminal({columns: 80, rows: 30})
-            let socket = this.socket
-
-            terminal.dom(term).on('data', (data)=>{this.socket.emit('input', data)})
-            this.socket.on('output', (data)=>{terminal.write(data)})
+            term.on('data', (data)=>{this.socket.emit('input', data)})
+            this.socket.on('output', (data)=>{term.write(data)})
         }
         return this.terminalElem
     }
@@ -101,6 +101,12 @@ class GooseTerminal {
 
 class GooseWindow {
     constructor() {
+        let body = document.querySelector('body')
+        body.addEventListener('keydown', (event)=>{
+            console.log(event.shiftKey)
+            console.log(event.ctrlKey)
+            console.log(event.key)
+        })
         this.regionTabs = document.querySelector('.region-tabs')
         this.regionTerminal = document.querySelector('.region-terminal')
     }
