@@ -1,5 +1,13 @@
 const electron = require('electron')
 const {app, BrowserWindow, globalShortcut, nativeImage, ipcMain} = electron
+const fs = require('fs')
+
+
+function getUserShell() {
+    let txt = fs.readFileSync('/etc/passwd', 'utf-8')
+    let matcher = new RegExp(`.*:.*:${process.geteuid()}:.*:.*:.*:(.*)`)
+    return matcher.exec(txt)[1]
+}
 
 
 class HidableWindow {
@@ -64,7 +72,7 @@ class HidableWindow {
     startTerm() {
         const pty = require('pty.js');
 
-        var term = pty.spawn('bash', [], {
+        var term = pty.spawn(getUserShell(), [], {
           name: 'xterm-color',
           cols: 80,
           rows: 30,

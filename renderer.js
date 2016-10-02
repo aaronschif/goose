@@ -83,6 +83,7 @@ class GooseTerminal {
             // term.fit()
 
             term.on('data', (data)=>{this.socket.emit('input', data)})
+            term.on('title', (title)=>{this.tabElem.innerHTML = title})
             this.socket.on('output', (data)=>{term.write(data)})
         }
         return this.terminalElem
@@ -103,9 +104,9 @@ class GooseWindow {
     constructor() {
         let body = document.querySelector('body')
         body.addEventListener('keydown', (event)=>{
-            console.log(event.shiftKey)
-            console.log(event.ctrlKey)
-            console.log(event.key)
+            // console.log(event.shiftKey)
+            // console.log(event.ctrlKey)
+            // console.log(event.key)
         })
         this.regionTabs = document.querySelector('.region-tabs')
         this.regionTerminal = document.querySelector('.region-terminal')
