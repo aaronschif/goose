@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <div class="region-terminal">
+    </div>
+    <div class="region-tabs">
+    </div>
+  </body>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+        display: flex;
+        flex: auto;
+        flex-direction: column;
+        font-family: monospace;
+    }
+    .region-terminal {
+      background-color: rgba(0, 0, 0, 0.9);
+      color: green;
+      flex: 1 1 auto;
+      overflow-y: scroll;
+      border: 1px solid black;
+    }
+    .region-tabs {
+      background-color: rgba(0, 0, 0, 0);
+      flex: 0 1 auto;
+    }
+    .tab {
+      display: inline-block;
+      background-color: rgba(255, 0, 0, 1);
+      margin: 0;
+      padding: .4em;
+      border: 1px solid black;
+    }
+  </style>
+
+  <script>
+    require('./renderer.js')
+  </script>
+</html>
