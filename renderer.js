@@ -1,6 +1,5 @@
 const {ipcRenderer} = require('electron')
 
-// const Terminal = require('terminal.js')
 const Terminal = require('xterm')
 require('xterm/addons/fit')
 
@@ -8,56 +7,19 @@ const {Duplex} = require('stream')
 const EventEmitter = require('events')
 
 
-// class GooseSocket extends Duplex {
-//     constructor() {
-//         super({
-//             // objectMode: true,
-//             // highWaterMark: 0,
-//         })
-//         // this.buffer = []
-//     }
-//     _write(chunk, encoding, callback) {
-//         console.log('_write')
-//         console.log(chunk)
-//         callback()
-//     }
-//     _writev(chunks, callback) {
-//         console.log('_writev')
-//         console.log(chunks)
-//         callback()
-//     }
-//     _read(size) {
-//         console.log('_read')
-//         console.log(size)
-//
-//         this.push(Buffer.from('asdf'))
-//         // this.push()
-//         // while () {
-//         //     console.log('asdf')
-//         // }
-//         this.push(null)
-//         // this.push('')
-//     }
-// }
-
-
 class GooseSocket extends EventEmitter {
     constructor() {
         super()
 
+        this.on('resize', (xy)=>{
+            // console.log(xy)
+            ipcRenderer.send('resize', xy)
+        })
         this.on('input', (data)=>{
             ipcRenderer.send('input', data)
         })
-        this.on('output', ()=>{})
-    }
-}
-
-
-class GooseChannel extends EventEmitter {
-    constructor() {
-        super()
-        ipcRenderer.on('goose', (event, data)=>{
-            this.emit('newData', data)
+        ipcRenderer.on('output', (event, data)=>{
+            this.emit('output', data)
         })
     }
 }
@@ -68,19 +30,17 @@ class GooseTerminal {
         this.tabElem = null
         this.terminalElem = null
         this.socket = new GooseSocket()
-        this.channel = new GooseChannel()
-        this.channel.on('newData', (data)=>{
-            this.socket.emit('output', data)
-        })
     }
 
     getTerminal() {
         if (this.terminalElem === null) {
-            this.terminalElem = document.createElement('div')
-            let term = new Terminal()
+            this.terminalElem = document.createDocumentFragment()
+            let term = this.term = new Terminal()
             term.open(this.terminalElem)
             term.resize(80, 30);
-            // term.fit()
+            term.on('resize', (event)=>{
+                this.socket.emit('resize', {cols: event.cols, rows: event.rows})
+            })
 
             term.on('data', (data)=>{this.socket.emit('input', data)})
             term.on('title', (title)=>{this.tabElem.innerHTML = title})
@@ -116,10 +76,12 @@ class GooseWindow {
         let term = new GooseTerminal()
         this.regionTabs.appendChild(term.getTab())
         this.regionTerminal.appendChild(term.getTerminal())
+        term.term.fit()
     }
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
+// document.addEventListener('DOMContentLoaded', ()=>{
+ipcRenderer.on('newTerm', ()=>{
     let win = new GooseWindow()
     win.add()
 })

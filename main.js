@@ -49,8 +49,6 @@ class HidableWindow {
 
         mainWindow.loadURL(`file://${__dirname}/index.html`)
 
-        mainWindow.webContents.openDevTools()
-
         mainWindow.on('closed', function () {
             mainWindow = null
         })
@@ -85,12 +83,18 @@ class HidableWindow {
         })
 
         term.on('data', (data)=>{
-            this.window.webContents.send('goose', data)
+            this.window.webContents.send('output', data)
         });
 
         ipcMain.on('input', (event, data)=>{
             term.write(data)
         })
+
+        ipcMain.on('resize', (event, data)=>{
+            term.resize(data.cols, data.rows)
+        })
+
+        this.window.webContents.send('newTerm')
     }
 
     show() {
