@@ -30,7 +30,7 @@
       background-color: rgba(0, 0, 0, 0.8);
       color: green;
       flex: 1 1 auto;
-      overflow-y: scroll;
+      overflow-y: none;
       border: 1px solid black;
     }
     .region-tabs {
@@ -43,6 +43,16 @@
       margin: 0;
       padding: .4em;
       border: 1px solid black;
+    }
+
+    ::-webkit-scrollbar {
+        width: .5rem;
+        background: rgba(0, 0, 0, 0);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: grey;
+        border-radius: 1rem;
     }
   </style>
 
