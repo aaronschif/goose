@@ -77,6 +77,7 @@ class GooseWindow {
         this.regionTabs.appendChild(term.getTab())
         this.regionTerminal.appendChild(term.getTerminal())
         term.term.fit()
+        term.term.textarea.focus()
     }
 }
 
