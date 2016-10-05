@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const debounce = require('debounce')
 
 const Terminal = require('xterm')
 require('xterm/addons/fit')
@@ -6,6 +7,9 @@ require('xterm/addons/fit')
 const {Duplex} = require('stream')
 const EventEmitter = require('events')
 
+Terminal.prototype.bell = function() {
+    this.emit('bell')
+}
 
 class GooseSocket extends EventEmitter {
     constructor() {
@@ -41,9 +45,14 @@ class GooseTerminal {
             term.on('resize', (event)=>{
                 this.socket.emit('resize', {cols: event.cols, rows: event.rows})
             })
+            term.on('bell', ()=>{
+                let a = document.createElement('audio')
+                a.src = './ding.mp3'
+                a.play()
+            })
 
             term.on('data', (data)=>{this.socket.emit('input', data)})
-            term.on('title', (title)=>{this.tabElem.innerHTML = title})
+            term.on('title', debounce((title)=>{this.tabElem.innerHTML = title}), 20)
             this.socket.on('output', (data)=>{term.write(data)})
         }
         return this.terminalElem
@@ -76,6 +85,7 @@ class GooseWindow {
         let term = new GooseTerminal()
         this.regionTabs.appendChild(term.getTab())
         this.regionTerminal.appendChild(term.getTerminal())
+        window.addEventListener('resize', debounce(()=>{term.term.fit()}, 200))
         term.term.fit()
         term.term.textarea.focus()
     }

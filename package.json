@@ -4,6 +4,7 @@
   "description": "dropdown terminal",
   "main": "goose/main.js",
   "dependencies": {
+    "debounce": "^1.0.0",
     "electron": "^1.4.2",
     "pty.js": "^0.3.1",
     "xterm": "^1.1.3"

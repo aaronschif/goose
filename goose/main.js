@@ -85,6 +85,9 @@ class HidableWindow {
         term.on('data', (data)=>{
             this.window.webContents.send('output', data)
         });
+        term.on('exit', (code, signal)=>{
+            console.log(`exit ${code} ${signal}`)
+        })
 
         ipcMain.on('input', (event, data)=>{
             term.write(data)
