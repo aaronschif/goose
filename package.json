@@ -2,7 +2,7 @@
   "name": "goose",
   "version": "1.0.0",
   "description": "dropdown terminal",
-  "main": "goose/main.js",
+  "main": "goose/main2.js",
   "dependencies": {
     "debounce": "^1.0.0",
     "electron": "^1.4.2",
