@@ -12,6 +12,9 @@ class Controller {
             // this.ipc.on()
         })
         this.ipc.server.start()
+
+        this.on = this.ipc.server.on.bind(this.ipc.server)
+        this.emit = this.ipc.server.emit.bind(this.ipc.server)
     }
 }
 
@@ -25,6 +28,8 @@ class Window {
         this.ipc.connectTo('world', ()=>{
 
         })
+        this.on = this.ipc.of.world.on.bind(this.ipc.of.world)
+        this.emit = this.ipc.of.world.emit.bind(this.ipc.of.world)
     }
 }
 
@@ -34,6 +39,9 @@ class Terminal {
         this.ipc = new IPC
         this.ipc.config.appspace = appspace
         this.ipc.config.id = 'terminal'+terminal_id
+
+        this.on = this.ipc.of.world.on.bind(this.ipc.of.world)
+        this.emit = this.ipc.of.world.emit.bind(this.ipc.of.world)
     }
 }
 
@@ -51,8 +59,8 @@ class GooseApp {
 
     initController() {
         let con = this.controller = new Controller()
-        con.ipc.server.on('reqTerm', (data, socket)=>{
-            con.ipc.server.emit('newTerm')
+        con.on('reqTerm', (data, socket)=>{
+            con.emit(socket, 'newTerm', {})
         })
     }
 
@@ -76,6 +84,10 @@ class GooseApp {
         win.webContents.on('did-finish-load', () => {
             win.webContents.send('init', {id: winNum})
         })
+    }
+
+    newTerminal() {
+
     }
 }
 

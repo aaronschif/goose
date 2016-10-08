@@ -3,5 +3,5 @@ const ipc = require('./ipc')
 
 ipcRenderer.on('init', (event, data)=>{
     let winIPC = new ipc.Window(data.id)
-    winIPC.ipc.of.world.emit('reqTerm')
+    winIPC.emit('reqTerm')
 })
